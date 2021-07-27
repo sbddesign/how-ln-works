@@ -1,0 +1,524 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>How LN Works</title>
+
+		<link rel="stylesheet" href="node_modules/reveal.js/dist/reset.css">
+		<link rel="stylesheet" href="node_modules/reveal.js/dist/reveal.css">
+		<link rel="stylesheet" href="node_modules/reveal.js/dist/theme/black.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="node_modules/reveal.js/plugin/highlight/monokai.css">
+		<script src="https://kit.fontawesome.com/56e9e76d78.js" crossorigin="anonymous"></script>
+		<style type="text/css">
+			@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,600;1,300;1,600&display=swap');
+
+			.fa-bitcoin {
+				color: #ff9500;
+			}
+
+			.fa-bolt {
+				color: #ff0;
+			}
+
+			.reveal {
+				font-family: 'Source Sans Pro', sans-serif;
+				font-weight: 300;
+			}
+
+			.reveal blockquote {
+				margin: 0;
+				padding: 0 1em;
+			}
+
+			.reveal blockquote p {
+				font-size: 36px;
+			}
+
+			.reveal section {
+				text-align: left;
+			}
+
+			.reveal strong {
+				font-weight: 600;
+			}
+		</style>
+
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<!-- Opening Slides / Introduction -->
+				<section data-markdown data-separator="---" data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					# How Lightning Works ⚡️
+					---
+					## About this presentation
+					- Based on Chapter 3 of [lnbook](https://github.com/lnbook/lnbook)
+					- Prepared for [TAB](https://twitter.com/TAB_ATL) and [Bitcoin Design](https://bitcoin.design)
+					- For review, please see
+					[bitcoinbook](https://github.com/bitcoinbook/bitcoinbook)
+					---
+					## Table of Contents
+					1. What is the Lightning Network
+					2. Comparisons with Bitcoin
+					3. Payment Channels
+					4. Invoices
+					5. Payments
+				</section>
+
+				<!-- LN Definition -->
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<section data-markdown>
+						## What is the Lightning Network?
+						> The Lightning Network (LN) is a peer-to-peer network of payment
+						channels implemented as smart contracts on the Bitcoin blockchain as
+						well as a communication protocol that defines how participants set
+						up and execute these smart contracts.
+					</section>
+				</section>
+
+				<!-- Comparisons with Bitcoin -->
+				<section data-markdown data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					## Comparisons with Bitcoin
+				</section>
+
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> Create a <strong>transaction</strong>
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> Send a <strong>payment</strong>
+					</p>
+				</section>
+
+				 <section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> Send to an <strong>address</strong>
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> Pay an <strong>invoice</strong>
+					</p>
+				</section>
+
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> Selecting <strong>outputs</strong> (UTXOs)
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> Finding a <strong>path</strong>
+					</p>
+				</section>
+
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> <strong>"Change"</strong> outputs
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> No <strong>"change"</strong>
+					</p>
+				</section>
+
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> <strong>Mining</strong> fees
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> <strong>Routing</strong> fees
+					</p>
+				</section>
+
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> Fees <strong>depend on traffic</strong>
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> Fees <strong>are announced</strong>
+					</p>
+				</section>
+
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> Transactions are <strong>public</strong>
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> Payments are <strong>private</strong>
+					</p>
+				</section>
+
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> <strong>Wait</strong> for confirmation
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> <strong>Instant</strong> settlement
+					</p>
+				</section>
+
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> Send amounts only limited by <strong>UTXOs</strong>
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> Send amounts limited by <strong>channel capcity</strong>
+					</p>
+				</section>
+
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> Incentives for <strong>large</strong> value transfer
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> Incentives for <strong>small</strong> value transfer
+					</p>
+				</section>
+
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> Uses the blockchain as a <strong>ledger</strong>
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> Uses the blockchain as a <strong>court system</strong>
+					</p>
+				</section>
+
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> Asynchronous (Offline)
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> Synchronous (Online)
+					</p>
+				</section>
+
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<p>
+						<i class="fab fa-bitcoin"></i> Satoshis
+					</p>
+					<p>
+						<i class="fas fa-bolt"></i> Milli-satoshis
+					</p>
+				</section>
+
+				<!-- Payment Channels / Intro -->
+				<section data-markdown data-separator="---" data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					## Payment channels
+					---
+					### What is a payment channel?
+					> A payment channel is a financial relationship between
+					[lightning] nodes, allocating funds from a multi-signature address,
+					through a strictly defined cryptographic protocol.
+				</section>
+
+				<!-- Payment Channels / Multisig -->
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+						<section data-markdown data-seperator="---">
+							### Payment Channel Basics
+							> You and your channel partner **negotiate** a sequence of
+							transactions that spend from [a] &hellip;
+							multisignature address. Instead of transmitting and recording
+							these transactions on the Bitcoin blockchain, you both hold on to
+							them, unspent.
+							---
+							![Screenshot from the show Better Call Saul](img/better-call-saul.jpg "Better Call Saul")
+							---
+							#### Multisig
+							> Payment channels are built on top of 2-of-2 multisignature
+							addresses.
+							---
+							> In summary, a multi-signature address is where bitcoin is locked
+							so that it requires multiple signatures to unlock and spend. In a
+							2-of-2 multisignature address, as used in the Lightning Network,
+							there are two participating signers and both need to sign in order
+							to spend the funds.
+						</section>
+				</section>
+
+				<!-- Payment Channels / Transactions -->
+				<section data-markdown data-seperator="---" data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					### Payment Channel Transactions
+					Payment channels involve Bitcoin transactions that are signed by
+					both nodes, but are not broadcast to be included in blocks by the
+					miners.
+					---
+					#### Funding Transaction
+					> The two channel partners fund the payment channel by sending bitcoin
+					to [a 2-of-2 multisignature address]. This transaction is called
+					the **funding transaction**, and is recorded on the Bitcoin blockchain.
+					---
+					##### Note on Funding Transactions
+					A funding *transaction* is **public**.
+
+					*Payments* between channel partners are **private**.
+					---
+					##### Unleashing Funds
+					> &hellip; [funds sent to the multisig address in the funding
+					TX] are sometimes referred to as "**locked** in a Lightning
+					channel"&hellip;
+					---
+					##### Unleashing Funds
+					> &hellip; However, in practice, funds in a Lightning channel are not
+					"locked" but rather "**unleashed**". Lightning channel funds are more
+					liquid than funds on the Bitcoin blockchain as they can be spent
+					faster, cheaper and more privately.
+					---
+					#### Refund Transaction
+					> In order to prevent [Bob from holding her funds hostage], Alice
+					will need to create an additional transaction that spends from the
+					[multisig] address, refunding her mBTC. Alice then has Bob sign
+					the refund transaction before broadcasting her funding [TX]
+					to the Bitcoin network. This way, Alice can get a refund even if Bob
+					disappears or fails to cooperate.
+					---
+					#### Commitment transactions
+					> After this initial exchange, commitment transactions are created
+					each time the channel balance changes. In other words, each time a
+					payment is sent between Alice and Bob, new commitment transactions
+					are created and signatures are exchanged. Each new commitment
+					transaction encodes the latest balance between Alice and Bob.
+					---
+					#### Punishment Transactions
+					> So, in our example, Bob holds a commitment transaction that pays
+					Alice immediately, but his own payment is delayed and revocable.
+					Alice also holds a commitment transaction, but hers is the opposite:
+					it pays Bob immediately but her own payment is delayed and
+					revocable.
+					---
+					#### Punishment Transactions
+					> The two channel partners hold half of the revocation secret, so
+					that neither one knows the whole secret. If they share their half,
+					hen the other channel partner has the full secret and can use it to
+					exercise the revocation condition.
+					---
+					#### Punishment Transactions
+					> When signing a new commitment transaction, each channel partner
+					revokes the previous commitment by giving the other party their half
+					of the revocation secret.
+				</section>
+
+				<!-- Payment Channels / Preventing cheating and smart contracts -->
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<section data-markdown>
+						##### Preventing cheating with prior state
+						Commitment transactions use a **smart contract** to help prevent
+						a channel partner from publishing a prior state TX.
+
+						The commitment TX that sends Bob his funds is timelocked to 2016
+						blocks, approximately 2 weeks. If he tries to publish this prior TX,
+						Alice can use the revocation secret to snag the funds before the 2
+						weeks is up.
+					</section>
+					<section data-markdown data-seperator="---">
+						##### Smart Contracts
+						In Bitcoin, a "locking script" is used to define what conditions
+						are necessary to spend a UTXO (Unspent Transaction Output).
+						---
+						###### Basic Example
+						This output would be spendable by anyone who could solve
+						`X + 3 = 5`.
+						```text
+						3 OP_ADD 5 OP_EQUAL
+						```
+						*It should go without saying this is a terrible
+						locking script.*
+						---
+						###### Typical UTXO
+						This output would be spendable by anyone who could provide a digital
+						signature for the given public key hash.
+						```text
+						OP_DUP OP_HASH160 (Public Key Hash) OP_EQUALVERIFY OP_CHECKSIG
+						```
+						*Commonly referred to as **P2PKH** (Pay to Public Key Hash).*
+						---
+						###### Multisig UTXO
+						This output would be spendable by anyone who could provide digital
+						signatures from 2 of 3 of the given public keys.
+						```text
+						2 (Public Key A) (Public Key B) (Public Key C) 3 CHECKMULTISIG
+						```
+						*Commonly referred to as **2-of-3 multisig**.*
+						---
+						###### Complex Unlocking Script
+						This output would be spendable by anyone who could satisfy a *[much
+						more complicated condition]*.
+
+						```text
+						2 (Mohammed's Public Key) (Partner1 Public Key) (Partner2 Public Key) (Partner3 Public Key) (Attorney Public Key) 5 CHECKMULTISIG
+						```
+
+						```text
+						54c557e07dde5bb6cb791c7a540e0a4796f5e97e
+						```
+
+						```text
+						HASH160 54c557e07dde5bb6cb791c7a540e0a4796f5e97e EQUAL
+						```
+						*Commonly referred to as **P2SH** (Pay to Script Hash).*
+					</section>
+				</section>
+
+				<!-- Payment Channels / Closing -->
+				<section data-markdown data-separator="---" data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					### Closing Chanels
+					- Closing channels is optional.
+					- You could keep a channel open indefinitely.
+					---
+					#### Mutual close (the good way)
+					- Fastest way to close a channel
+					- Partner who initiated channel open pays on-chain TX&nbsp;fees
+					---
+					#### Force close (the bad way)
+					- One channel partner is offline or uncooperative
+					- Partner initiating force close has slight disadvantage
+					  - Other partner's funds are spendable immediately
+					  - Closer's funds are timelocked.
+					  - This gives the other partner time to dispute the TX using
+						revocation secret in event that the closing partner is cheating with
+						a prior commitment TX.
+					---
+					#### Force close (the bad way)
+					- Force close TX will have higher on-chain fees.
+					- The commitment TX has very generous fees included because on-chain
+					TX fees will be unknown at time commitment TX is created.
+					- This TX also includes additional outputs for pending routing
+					attempts, so the TX will be larger.
+					- Force close should be considered a **last resort**.
+					---
+					#### Protocol breach (the ugly way)
+					- This could be done after a cheating partner initiates a force
+					close with a previous commitment TX.
+					- Other partner can publish a punishment TX and collect cheater's
+					share of the funds, without being encumbered by a timelock.
+					---
+					##### How to catch a protocol breach
+					There are 3 ways to do it:
+					1. Run a LN node 24/7
+					2. Run a watchtower
+					3. Use a 3rd party watchtower
+				</section>
+
+				<!-- Invoices -->
+				<section data-markdown data-separator="---" data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					## Invoices
+					LN payments begin with an **invoice**.
+
+					*Example: Bob prompts Alice for payment by sending her an invoice.*
+					---
+					*There is a way to send uninitiated payments with **keysend**,
+					which will be covered in later chapters of the&nbsp;book.*
+					---
+					> An invoice is a simple payment instruction containing information
+					such as&hellip;
+					- Payment hash (unique identifier)
+					- Recipient
+					- Amount
+					- Optional text description
+					---
+					### Payment Hash
+					The payment hash is the most important part of the invoice.
+
+					To create a **payment hash** *(H)*, Alice first picks a **preimage**
+					*(r)*, a random number that only she knows. *H* is then calculated
+						generating a SHA256 hash of *r*.
+
+					```text
+					H = SHA256(r)
+					```
+					---
+					Invoices are sent out of band, not over LN. Bech32 encoded string or
+					QR code, sent over text, email, phone screen, etc.
+				</section>
+				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					<img src="img/invoice-example.png" alt="LN Invoice" style="width:400px;" />
+				</section>
+
+				<!-- Payments -->
+				<section data-markdown data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
+					## Delivering a payment
+					---
+					LN payments are atomic. They succeed or fail -- no middle state.
+					---
+					### P2P Gossip Protocol
+					> Channel announcements are communicated over a peer-to-peer gossip
+					protocol. A [P2P] protocol is a communications protocol where each
+					node connects to a random selection of other nodes in the network
+					&hellip; each of the nodes that are directly connected &hellip;
+					to your node are called your peers.
+					---
+					When two nodes form a channel, the channel can be **announced** or
+					**unannounced**.
+					---
+					Gossop protocol only shares partial topology information.
+					- To protect privacy
+					- To scale the amount of payments
+					- Information is outdated by the time it is received
+					---
+					### Pathfinding and routing
+					- Payments are forwarded along a **path** made of multiple channels.
+					- **Pathfinding** is the process of finding a path from source to destination.
+					- **Routing** is using the path to make a payment.
+					---
+					### Source-based Pathfinding
+					> If we knew the exact channel balances of every channel, we could
+					easily compute a payment path using any of the standard pathfinding
+					algorithms taught in any computer science class.
+					---
+					> With only partial information about the network topology, pathfinding
+					is a real challenge and active research is still being conducted into
+					this part of the Lightning Network. The fact that the pathfinding
+					problem is not "fully solved" in the Lightning Network is a major
+					point of criticism towards the technology.
+					---
+					### Onion routing
+					> A payment package used for routing is called an "onion".
+					---
+					#### Building an Onion
+					> On its route from payment [payer] to [payee] the onion
+					is passed from node to node along the path. The [payer] constructs the
+					entire onion, from the center out.
+					---
+					#### Building an Onion
+					> First, the [payer] creates the
+					payment information for the (final) recipient of the payment and
+					encrypts it with a layer of encryption that only the recipient can
+					decrypt.
+					---
+					#### Building an Onion
+					> Then, the [payer] wraps that layer with instructions for the
+					node in the path immediately preceding the final recipient and
+					encrypts with a layer that only that node can decrypt.
+					---
+					### P2P encryption
+					The LN can be thought of as 2 networks:
+					- A network of nodes connected via gossip protocol
+					- A network of partners with payment channels
+					---
+					#### Lightning messages
+					> All communication between peers is sent via messages called
+					Lightning messages. These messages are all encrypted, using a
+					cryptographic communications framework called the Noise Protocol
+					Framework.
+				</section>
+			</div>
+		</div>
+
+		<script src="node_modules/reveal.js/dist/reveal.js"></script>
+		<script src="node_modules/reveal.js/plugin/notes/notes.js"></script>
+		<script src="node_modules/reveal.js/plugin/markdown/markdown.js"></script>
+		<script src="node_modules/reveal.js/plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+
+	</body>
+</html>
