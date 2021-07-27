@@ -42,6 +42,10 @@
 				text-align: left;
 			}
 
+			.reveal section.center {
+				text-align: center;
+			}
+
 			.reveal strong {
 				font-weight: 600;
 			}
@@ -429,9 +433,8 @@
 					---
 					Invoices are sent out of band, not over LN. Bech32 encoded string or
 					QR code, sent over text, email, phone screen, etc.
-				</section>
-				<section data-background-color="#000" data-background-image="img/network.png" data-background-opacity="0.4">
-					<img src="img/invoice-example.png" alt="LN Invoice" style="width:400px;" />
+
+					![Screenshot of BlueWallet Invoice](img/invoice-example.png "Lightning Invoice")
 				</section>
 
 				<!-- Payments -->
@@ -456,6 +459,8 @@
 					- Information is outdated by the time it is received
 					---
 					### Pathfinding and routing
+					![Diagram of routing a LN payment](img/routing-payment.png)
+					---
 					- Payments are forwarded along a **path** made of multiple channels.
 					- **Pathfinding** is the process of finding a path from source to destination.
 					- **Routing** is using the path to make a payment.
